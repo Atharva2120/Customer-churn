@@ -5,7 +5,7 @@ Predict whether a customer is likely to stop using a service (churn) using machi
 ## 🔗 Dataset
 Kaggle: https://www.kaggle.com/datasets/ankitverma2010/ecommerce-customer-churn-analysis-and-prediction/data
 
-> Download the dataset and place the CSV in `data/customer_churn.csv`.
+> Download the dataset and place the CSV in `data/e_comm_data.csv`.
 
 ## ✨ Project Highlights
 - Classification models (Logistic Regression, Random Forest, Gradient Boosting)
@@ -21,7 +21,7 @@ Kaggle: https://www.kaggle.com/datasets/ankitverma2010/ecommerce-customer-churn-
 Customer-churn/
 ├── app.py
 ├── data/
-│   └── customer_churn.csv   # dataset (download from Kaggle)
+│   └── e_comm_data.csv   # dataset (download from Kaggle)
 ├── notebooks/
 │   └── customer_churn_prediction.ipynb
 ├── outputs/
@@ -45,12 +45,12 @@ pip install -r requirements.txt
 
 ## 📊 Run EDA (plots saved to outputs/eda/)
 ```bash
-python src/eda.py --data data/customer_churn.csv --target Churn
+python src/eda.py --data data/e_comm_data.csv --target Churn
 ```
 
 ## 🧪 Train Models
 ```bash
-python src/train.py --data data/customer_churn.csv --target Churn
+python src/train.py --data data/e_comm_data.csv --target Churn
 ```
 
 Outputs:
@@ -60,7 +60,7 @@ Outputs:
 
 ## 🎛️ Hyperparameter Tuning
 ```bash
-python src/tune.py --data data/customer_churn.csv --target Churn
+python src/tune.py --data data/e_comm_data.csv --target Churn
 ```
 
 Outputs:
@@ -69,7 +69,7 @@ Outputs:
 
 ## 🔮 Predict on New Data
 ```bash
-python src/predict.py --model outputs/model.pkl --input data/customer_churn.csv --output outputs/predictions.csv
+python src/predict.py --model outputs/model.pkl --input data/e_comm_data.csv --output outputs/predictions.csv
 ```
 
 ## 🖥️ Streamlit App
@@ -86,7 +86,7 @@ notebooks/customer_churn_prediction.ipynb
 ```
 
 ## ✅ Recommended Model
-Start with **Logistic Regression** as a baseline, then compare **Random Forest** and **Gradient Boosting**. In most tabular churn datasets, **Gradient Boosting** tends to provide the best balance of performance and interpretability.
+Start with **Logistic Regression** as a baseline, then compare **Random Forest** and **Gradient Boosting**. In most tabular churn datasets, **Gradient Boosting** tends to provide the best balance [...]
 
 ## 👤 Author
 Atharva2120
