@@ -15,17 +15,39 @@ metrics_path = st.sidebar.text_input("Metrics path", "outputs/metrics.json")
 fi_path = st.sidebar.text_input("Feature importance", "outputs/feature_importance.csv")
 eda_dir = st.sidebar.text_input("EDA directory", "outputs/eda")
 
+metrics = None
 if os.path.exists(metrics_path):
     with open(metrics_path, "r", encoding="utf-8") as f:
         metrics = json.load(f)
-    st.sidebar.subheader("Model Metrics")
-    st.sidebar.json(metrics)
 
 model = None
 if os.path.exists(model_path):
     model = joblib.load(model_path)
 else:
     st.warning("Model not found. Train a model first using src/train.py.")
+
+if metrics:
+    st.subheader("Model Metrics")
+    results = metrics.get("results", {})
+    rows = []
+    for model_name, values in results.items():
+        rows.append({
+            "model": model_name,
+            "accuracy": values.get("accuracy"),
+            "f1": values.get("f1"),
+            "roc_auc": values.get("roc_auc"),
+        })
+
+    metrics_df = pd.DataFrame(rows).sort_values("roc_auc", ascending=False)
+
+    if not metrics_df.empty:
+        top = metrics_df.iloc[0]
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Best Model", top["model"])
+        c2.metric("ROC-AUC", f"{top['roc_auc']:.3f}")
+        c3.metric("F1", f"{top['f1']:.3f}")
+
+        st.dataframe(metrics_df, use_container_width=True)
 
 uploaded = st.file_uploader("Upload CSV", type=["csv"])
 
