@@ -1,0 +1,29 @@
+{
+  "best_model": "random_forest",
+  "results": {
+    "random_forest": {
+      "best_params": {
+        "model__n_estimators": 200,
+        "model__min_samples_split": 5,
+        "model__max_depth": null
+      },
+      "metrics": {
+        "accuracy": 0.9520426287744227,
+        "f1": 0.8383233532934131,
+        "roc_auc": 0.993353576248313
+      }
+    },
+    "gradient_boosting": {
+      "best_params": {
+        "model__n_estimators": 300,
+        "model__max_depth": 4,
+        "model__learning_rate": 0.1
+      },
+      "metrics": {
+        "accuracy": 0.9573712255772646,
+        "f1": 0.8666666666666667,
+        "roc_auc": 0.9895524066576699
+      }
+    }
+  }
+}
