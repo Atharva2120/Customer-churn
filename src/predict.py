@@ -8,10 +8,14 @@ def main():
     parser.add_argument("--model", required=True, help="Path to trained model.pkl")
     parser.add_argument("--input", required=True, help="Input CSV file")
     parser.add_argument("--output", required=True, help="Output CSV file")
+    parser.add_argument("--target", default=None, help="Target column name to drop if present")
     args = parser.parse_args()
 
     model = joblib.load(args.model)
     df = pd.read_csv(args.input)
+
+    if args.target and args.target in df.columns:
+        df = df.drop(columns=[args.target])
 
     preds = model.predict(df)
     proba = model.predict_proba(df)[:, 1] if hasattr(model, "predict_proba") else None

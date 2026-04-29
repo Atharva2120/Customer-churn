@@ -37,6 +37,27 @@ def build_preprocessor(X: pd.DataFrame) -> ColumnTransformer:
     )
 
 
+def get_feature_names(preprocess: ColumnTransformer) -> list:
+    feature_names = []
+    for name, transformer, cols in preprocess.transformers_:
+        if name == "remainder" and transformer == "drop":
+            continue
+
+        if isinstance(transformer, Pipeline):
+            last_step = transformer.steps[-1][1]
+            if hasattr(last_step, "get_feature_names_out"):
+                names = last_step.get_feature_names_out(cols)
+            else:
+                names = cols
+        elif hasattr(transformer, "get_feature_names_out"):
+            names = transformer.get_feature_names_out(cols)
+        else:
+            names = cols
+
+        feature_names.extend(list(names))
+    return feature_names
+
+
 def evaluate_model(model, X_test, y_test):
     preds = model.predict(X_test)
     proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else None
@@ -106,14 +127,34 @@ def main():
     os.makedirs(args.output_dir, exist_ok=True)
     model_path = os.path.join(args.output_dir, "model.pkl")
     metrics_path = os.path.join(args.output_dir, "metrics.json")
+    importance_path = os.path.join(args.output_dir, "feature_importance.csv")
 
     joblib.dump(best_pipeline, model_path)
     with open(metrics_path, "w", encoding="utf-8") as f:
         json.dump({"best_model": best_name, "results": results}, f, indent=2)
 
+    # Feature importance
+    model = best_pipeline.named_steps["model"]
+    preprocess = best_pipeline.named_steps["preprocess"]
+    feature_names = get_feature_names(preprocess)
+
+    if hasattr(model, "feature_importances_"):
+        importances = model.feature_importances_
+    elif hasattr(model, "coef_"):
+        importances = np.abs(model.coef_[0])
+    else:
+        importances = None
+
+    if importances is not None:
+        fi = pd.DataFrame({"feature": feature_names, "importance": importances})
+        fi = fi.sort_values("importance", ascending=False)
+        fi.to_csv(importance_path, index=False)
+
     print(f"Best model: {best_name}")
     print(f"Saved model to {model_path}")
     print(f"Saved metrics to {metrics_path}")
+    if importances is not None:
+        print(f"Saved feature importance to {importance_path}")
 
 
 if __name__ == "__main__":
